@@ -26,8 +26,19 @@ under the `crossroads-all` localStorage key, separate from the season pages.
    EPISODES arrays from the Season 1 and Season 2 player `index.html` files
    and rebuilds this page's `index.html` (it also corrects Episode 16's
    duration to 26:07, the v2 master length — the Season 1 page still lists
-   24:55).
+   24:55). It also re-reads the chunk list from the
+   `crossroads-continuous` repo's `chunks.json`, so rebuild the affected
+   continuous chunk FIRST (see that repo's README — only the last chunk
+   of a season is rebuilt, append-only), then re-run this script.
 3. Commit + push. Pages rebuilds automatically.
+
+## Continuous mode (Keep playing with screen off)
+
+Same as the season pages: the button plays the ~2-hour chunk recordings
+from the `crossroads-continuous` repo (all five chunks: S1 parts 1–4,
+then the Season 2 chunk), so playback keeps going with the screen off.
+The page polls that repo's `chunks.json` every 5 minutes and picks up
+rebuilt chunks without a refresh or interrupting playback.
 
 Episode numbers run continuously across seasons (Season 1 = 1–21, Season 2
 starts at 22) — never restart numbering at 1 for a new season.
