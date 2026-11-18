@@ -85,8 +85,10 @@
   </header>
 
   <div class="row">
-    <button class="btn btn-gold" id="playAllBtn">&#9654; Play All — Season 2</button>
+    <button class="btn btn-gold" id="playAllBtn">&#9654; Play All Episodes</button>
     <button class="btn btn-ghost" id="shuffleBtn">&#8635; Shuffle</button>
+    <button class="btn btn-ghost" id="playS1Btn">&#9654; Play Season 1</button>
+    <button class="btn btn-ghost" id="playS2Btn">&#9654; Play Season 2</button>
   </div>
 
   <section class="card" aria-label="Now playing">
@@ -391,6 +393,18 @@ document.getElementById('playAllBtn').addEventListener('click', function(){
   setShuffle(false);
   continuousEl.checked = true;
   loadEpisode(0, true);
+  document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
+});
+document.getElementById('playS1Btn').addEventListener('click', function(){
+  setShuffle(false);
+  continuousEl.checked = true;
+  loadEpisode(0, true);
+  document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
+});
+document.getElementById('playS2Btn').addEventListener('click', function(){
+  setShuffle(false);
+  continuousEl.checked = true;
+  loadEpisode(21, true);
   document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
 });
 document.getElementById('shuffleBtn').addEventListener('click', function(){
