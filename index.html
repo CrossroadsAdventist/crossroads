@@ -49,6 +49,9 @@
   .toggle input{accent-color:var(--gold);width:18px;height:18px}
   .season-head{font-size:1.25rem;color:var(--gold-soft);letter-spacing:.06em;
     margin:26px 4px 6px;text-transform:uppercase}
+  .season-toggle{all:unset;cursor:pointer;display:inline-flex;align-items:center;gap:8px}
+  .season-toggle .chev{font-size:.85em;color:var(--gold)}
+  .ep.collapsed{display:none}
   .ep{list-style:none;margin:0;padding:0}
   .ep li{margin:0}
   .ep button{all:unset;display:flex;gap:12px;width:100%;cursor:pointer;
@@ -114,9 +117,9 @@
   <audio id="player" preload="auto"></audio>
   <audio id="preloadAudio" preload="auto"></audio>
 
-  <h2 class="season-head">Season 1</h2>
-  <ol class="ep" id="episodeListS1"></ol>
-  <h2 class="season-head">Season 2</h2>
+  <h2 class="season-head"><button type="button" class="season-toggle" data-list="episodeListS1" aria-expanded="false">Season 1 <span class="chev">&#9656;</span></button></h2>
+  <ol class="ep collapsed" id="episodeListS1"></ol>
+  <h2 class="season-head"><button type="button" class="season-toggle" data-list="episodeListS2" aria-expanded="true">Season 2 <span class="chev">&#9662;</span></button></h2>
   <ol class="ep" id="episodeListS2"></ol>
 
   <section class="card">
@@ -840,6 +843,29 @@ if('mediaSession' in navigator){
 
 buildList();
 restorePosition();
+</script>
+<script>
+(function(){
+  function setSeason(listId, open){
+    var list = document.getElementById(listId);
+    var btn = document.querySelector('.season-toggle[data-list="'+listId+'"]');
+    if(!list || !btn) return;
+    list.classList.toggle('collapsed', !open);
+    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+    var chev = btn.querySelector('.chev');
+    if(chev) chev.textContent = open ? '\u25be' : '\u25b8';
+  }
+  document.querySelectorAll('.season-toggle').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var list = document.getElementById(btn.getAttribute('data-list'));
+      setSeason(btn.getAttribute('data-list'), list.classList.contains('collapsed'));
+    });
+  });
+  var s1 = document.getElementById('playS1Btn');
+  if(s1) s1.addEventListener('click', function(){ setSeason('episodeListS1', true); });
+  var s2 = document.getElementById('playS2Btn');
+  if(s2) s2.addEventListener('click', function(){ setSeason('episodeListS2', true); });
+})();
 </script>
 </body>
 </html>
