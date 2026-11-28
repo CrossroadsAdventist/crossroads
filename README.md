@@ -26,7 +26,9 @@ special was too hard to find). The 5 Christmas episodes live in their own
 player (https://crossroadsadventist.github.io/crossroads-christmas/) — they
 are NOT in `EPISODES`, so Play All, Shuffle, chunks and the auto-update
 poller never touch them. Tapping one plays it directly; the next Christmas
-episode follows when it ends (if continuous play is on). Rebuilt by
+episode follows when it ends (if continuous play is on). The
+**Play Christmas Special** button in the top row plays just the 5
+Christmas episodes in order. Rebuilt by
 `build_combined.py` from `christmas/player-deploy/episodes.json`.
 
 ## Adding a future episode

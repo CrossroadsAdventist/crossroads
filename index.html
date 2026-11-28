@@ -94,6 +94,7 @@
     <button class="btn btn-ghost" id="chunkBtn">&#8734; Keep playing with screen off</button>
     <button class="btn btn-ghost" id="playS1Btn">&#9654; Play Season 1</button>
     <button class="btn btn-ghost" id="playS2Btn">&#9654; Play Season 2</button>
+    <button class="btn btn-ghost" id="playXmasBtn">&#9654; Play Christmas Special</button>
   </div>
 
   <section class="card" aria-label="Now playing">
@@ -1047,6 +1048,12 @@ document.getElementById('playS2Btn').addEventListener('click', function(){
   playEpisodeContinuous(21);
   document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
 });
+document.getElementById('playXmasBtn').addEventListener('click', function(){
+  setShuffle(false);
+  continuousEl.checked = true;
+  playChristmas(0, true);
+  document.querySelector('.card').scrollIntoView({behavior:'smooth', block:'start'});
+});
 document.getElementById('shuffleBtn').addEventListener('click', function(){
   if(shuffleOn){ setShuffle(false); }
   else{ startShuffle(); }
@@ -1100,6 +1107,8 @@ restorePosition();
   if(s1) s1.addEventListener('click', function(){ setSeason('episodeListS1', true); });
   var s2 = document.getElementById('playS2Btn');
   if(s2) s2.addEventListener('click', function(){ setSeason('episodeListS2', true); });
+  var xm = document.getElementById('playXmasBtn');
+  if(xm) xm.addEventListener('click', function(){ setSeason('episodeListXmas', true); });
 })();
 </script>
 <script>
