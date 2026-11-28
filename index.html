@@ -123,6 +123,8 @@
   <ol class="ep collapsed" id="episodeListS1"></ol>
   <h2 class="season-head"><button type="button" class="season-toggle" data-list="episodeListS2" aria-expanded="true">Season 2 <span class="chev">&#9662;</span></button></h2>
   <ol class="ep" id="episodeListS2"></ol>
+  <h2 class="season-head"><button type="button" class="season-toggle" data-list="episodeListXmas" aria-expanded="false">A Crossroads Christmas Special: Home for Christmas <span class="chev">&#9656;</span></button></h2>
+  <ol class="ep collapsed" id="episodeListXmas"></ol>
 
   <section class="card">
     <p class="note" style="margin-top:0">
@@ -153,6 +155,7 @@
     <p class="links">
       <a href="https://crossroadsadventist.github.io/crossroads-season-1/">Season 1 player</a>
       <a href="https://crossroadsadventist.github.io/crossroads-season-2/">Season 2 player</a>
+      <a href="https://crossroadsadventist.github.io/crossroads-christmas/">Christmas Special player</a>
     </p>
     <p>Crossroads Studios &middot; All Episodes</p>
   </footer>
@@ -285,6 +288,18 @@ var EPISODES = [
    desc:"Micah Hawthorne, 16, volunteers at the community food pantry in Fredericton — until the Thursday package arrives with a name he recognizes: his classmate Ezra Beaumont. Suddenly the boy he sits beside in chemistry is someone whose family needs help, and Micah has to decide what to do with what he knows — protect Ezra's privacy, help quietly, or say something. With his friend Naomi and the pantry coordinator Mara each showing him a different side of kindness, Micah learns that generosity is about how you give, not just what you give. Ellie and Marcus close with Matthew 6:3–4 — give quietly, and let dignity lead."},
   {n:62, title:"Room for One More", dur:"22:27", file:"https://crossroadsadventist.github.io/crossroads-season-2/episode-62-room-for-one-more.mp3",
    desc:"Griffin Ashford, 16, has always had his room to himself — until his family takes in Silas Rowan, a foster teen his own age. Suddenly Griffin's desk, his closet, and his routines all have to stretch to fit someone else, and sharing a room turns out to be about a lot more than clearing a shelf. At school Griffin keeps Silas a secret from his friends, while at home the two boys keep bumping into each other's habits, hurts, and unspoken rules. As jealousy and awkwardness build, both of them have to figure out what it really means to belong somewhere — and whether making room for someone means losing your own place. Ellie and Marcus close with Romans 15, about receiving one another the way Christ has received us."},
+];
+var CHRISTMAS = [
+  {n:1, title:"All I Want for Christmas", dur:"19:23", file:"https://crossroadsadventist.github.io/crossroads-christmas/episode-1-all-i-want-for-christmas.mp3",
+   desc:"Tori, Gabby, Eli and Nate count down to Christmas — but what Tori really wants can't be wrapped."},
+  {n:2, title:"The Things We Hide", dur:"18:48", file:"https://crossroadsadventist.github.io/crossroads-christmas/episode-2-the-things-we-hide.mp3",
+   desc:"The day after a broken promise — and Tori is not the only one hiding something."},
+  {n:3, title:"Secrets in the Snow", dur:"19:13", file:"https://crossroadsadventist.github.io/crossroads-christmas/episode-3-secrets-in-the-snow.mp3",
+   desc:"Tori finally has the call with her father — and six days before Christmas Eve, the main hall floods."},
+  {n:4, title:"A Place at the Table", dur:"19:32", file:"https://crossroadsadventist.github.io/crossroads-christmas/episode-4-a-place-at-the-table.mp3",
+   desc:"Five days to move Christmas Together into the church hall — and Tori's father comes home with news."},
+  {n:5, title:"The Greatest Gift", dur:"19:15", file:"https://crossroadsadventist.github.io/crossroads-christmas/episode-5-the-greatest-gift.mp3",
+   desc:"Christmas Eve at last — and Tori finally learns what the greatest gift is."},
 ];
 
 var CHUNK_BASE = 'https://crossroadsadventist.github.io/crossroads-continuous/';
@@ -530,6 +545,12 @@ function markCurrent(){
     var b = document.getElementById('ep-btn-' + i);
     if(b) b.classList.toggle('current', i === current);
   });
+  if(typeof CHRISTMAS !== 'undefined' && typeof christmasCurrent !== 'undefined'){
+    CHRISTMAS.forEach(function(_, i){
+      var b = document.getElementById('xmas-btn-' + i);
+      if(b) b.classList.toggle('current', i === christmasCurrent);
+    });
+  }
 }
 
 /* ---- Auto-update: pick up newly published episodes without a refresh ----
@@ -665,6 +686,7 @@ function chunkForEpisode(n){
 function playEpisodeContinuous(i){
   var ep = EPISODES[i];
   if(!ep) return;
+  if(typeof christmasCurrent !== 'undefined') christmasCurrent = -1;
   var c = chunkForEpisode(ep.n);
   if(c){ loadChunk(c.ci, c.at, true); return; }
   loadEpisode(i, true);
@@ -707,6 +729,7 @@ function updateChunkEpisode(t){
 }
 function loadChunk(ci, startAt, autoplay){
   if(ci < 0 || ci >= CHUNKS.length) return;
+  if(typeof christmasCurrent !== 'undefined') christmasCurrent = -1;
   loadSeq++;
   chunkMode = true;
   chunkIdx = ci;
@@ -848,6 +871,7 @@ document.getElementById('chunkBtn').addEventListener('click', startChunkMode);
 
 function loadEpisode(i, autoplay){
   if(i < 0 || i >= EPISODES.length) return;
+  if(typeof christmasCurrent !== 'undefined') christmasCurrent = -1;
   loadSeq++;
   exitChunkMode();
   current = i;
@@ -875,6 +899,10 @@ function loadEpisode(i, autoplay){
 }
 
 function togglePlay(){
+  if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+    if(audio.paused){ audio.play(); } else { audio.pause(); }
+    return;
+  }
   if(current < 0){ playEpisodeContinuous(0); return; }
   if(audio.paused){ audio.play(); } else { audio.pause(); }
 }
@@ -930,6 +958,15 @@ audio.addEventListener('timeupdate', function(){
 });
 audio.addEventListener('ended', function(){
   savePosition(0);
+  if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+    if(continuousEl.checked && christmasCurrent + 1 < CHRISTMAS.length){
+      playChristmas(christmasCurrent + 1, true);
+    }else{
+      christmasCurrent = -1;
+      playBtn.innerHTML = '&#9654;';
+    }
+    return;
+  }
   if(chunkMode){
     var ni = nextChunkIdx();
     if(ni >= 0) loadChunk(ni, 0, true);
@@ -974,12 +1011,21 @@ seek.addEventListener('input', function(){
 playBtn.addEventListener('click', togglePlay);
 document.getElementById('prevBtn').addEventListener('click', function(){
   if(chunkMode){ prevChunkEpisode(); return; }
+  if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+    if(audio.currentTime > 5){ audio.currentTime = 0; return; }
+    if(christmasCurrent > 0){ playChristmas(christmasCurrent - 1, true); return; }
+    audio.currentTime = 0; return;
+  }
   var prv = prevInQueue();
   if(prv < 0){ audio.currentTime = 0; return; }
   loadEpisode(prv, true);
 });
 document.getElementById('nextBtn').addEventListener('click', function(){
   if(chunkMode){ nextChunkEpisode(); return; }
+  if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+    if(christmasCurrent + 1 < CHRISTMAS.length) playChristmas(christmasCurrent + 1, true);
+    return;
+  }
   var nxt = nextInQueue();
   if(nxt >= 0 && nxt < EPISODES.length) loadEpisode(nxt, true);
 });
@@ -1010,11 +1056,20 @@ if('mediaSession' in navigator){
   try{
     navigator.mediaSession.setActionHandler('previoustrack', function(){
       if(chunkMode){ prevChunkEpisode(); return; }
+      if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+        if(audio.currentTime > 5){ audio.currentTime = 0; return; }
+        if(christmasCurrent > 0) playChristmas(christmasCurrent - 1, true);
+        return;
+      }
       var prv = prevInQueue();
       if(prv >= 0) loadEpisode(prv, true);
     });
     navigator.mediaSession.setActionHandler('nexttrack', function(){
       if(chunkMode){ nextChunkEpisode(); return; }
+      if(typeof christmasCurrent !== 'undefined' && christmasCurrent >= 0){
+        if(christmasCurrent + 1 < CHRISTMAS.length) playChristmas(christmasCurrent + 1, true);
+        return;
+      }
       var nxt = nextInQueue();
       if(nxt >= 0 && nxt < EPISODES.length) loadEpisode(nxt, true);
     });
@@ -1046,6 +1101,64 @@ restorePosition();
   var s2 = document.getElementById('playS2Btn');
   if(s2) s2.addEventListener('click', function(){ setSeason('episodeListS2', true); });
 })();
+</script>
+<script>
+/* ---- A Crossroads Christmas Special (combined player only) ----
+   The 5 Christmas episodes live in their own CHRISTMAS array and list.
+   They are NOT in EPISODES, so Play All, Shuffle, chunks and the
+   auto-update poller never touch them. Tapping one plays it directly;
+   when it ends, the next Christmas episode follows (if continuous
+   play is on). */
+var christmasCurrent = -1;
+function playChristmas(i, autoplay){
+  var ep = CHRISTMAS[i];
+  if(!ep) return;
+  loadSeq++;
+  exitChunkMode();
+  current = -1;
+  christmasCurrent = i;
+  audio.src = ep.file;
+  audio.load();
+  nowTitle.textContent = 'Christmas Episode ' + ep.n + ' \u2014 ' + ep.title;
+  nowSub.textContent = ep.desc + ' \u00b7 ' + ep.dur;
+  nowPos.textContent = 'Christmas Episode ' + ep.n + ' \u00b7 ' + (i + 1) +
+    ' of ' + CHRISTMAS.length + ' \u00b7 A Crossroads Christmas Special';
+  markCurrent();
+  refreshSeekDisplay();
+  savePosition(0);
+  if('mediaSession' in navigator){
+    navigator.mediaSession.metadata = new MediaMetadata({
+      title: 'Christmas Episode ' + ep.n + ' \u2014 ' + ep.title,
+      artist: 'Crossroads',
+      album: 'Crossroads \u2014 Christmas Special'
+    });
+  }
+  if(autoplay){
+    var p = audio.play();
+    if(p && p.catch) p.catch(function(){ /* waiting for a tap is fine */ });
+  }
+}
+function buildChristmasList(){
+  var list = document.getElementById('episodeListXmas');
+  if(!list) return;
+  CHRISTMAS.forEach(function(ep, i){
+    var li = document.createElement('li');
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.id = 'xmas-btn-' + i;
+    b.innerHTML =
+      '<span class="num">' + ep.n + '</span>' +
+      '<span style="flex:1;min-width:0;text-align:left">' +
+        '<h3>Episode ' + ep.n + ' \u2014 ' + ep.title + '</h3>' +
+        '<p>' + ep.desc + '</p>' +
+      '</span>' +
+      '<span class="dur">' + ep.dur + '</span>';
+    b.addEventListener('click', function(){ playChristmas(i, true); });
+    li.appendChild(b);
+    list.appendChild(li);
+  });
+}
+buildChristmasList();
 </script>
 </body>
 </html>

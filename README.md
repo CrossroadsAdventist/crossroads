@@ -19,6 +19,16 @@ points at them. Same player design as the season pages (Play All, seek,
 auto-advance, remembered position, MediaSession). Resume position is saved
 under the `crossroads-all` localStorage key, separate from the season pages.
 
+The page also has a separate **A Crossroads Christmas Special: Home for
+Christmas** section after Season 2 (added 2026-11-27, Hanna's call — the
+special was too hard to find). The 5 Christmas episodes live in their own
+`CHRISTMAS` array and list, with audio by absolute URL from the Christmas
+player (https://crossroadsadventist.github.io/crossroads-christmas/) — they
+are NOT in `EPISODES`, so Play All, Shuffle, chunks and the auto-update
+poller never touch them. Tapping one plays it directly; the next Christmas
+episode follows when it ends (if continuous play is on). Rebuilt by
+`build_combined.py` from `christmas/player-deploy/episodes.json`.
+
 ## Adding a future episode
 
 1. Finish the episode in its season player first (master + push there).
